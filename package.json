@@ -9,14 +9,22 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "supabase:pull": "source .env && source .env.local && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/services/supabase.types.ts"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.12",
+    "@heroicons/vue": "^2.0.16",
+    "@supabase/supabase-js": "^2.10.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@vueuse/core": "^9.13.0",
+    "lodash": "^4.17.21",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
+    "@types/lodash": "^4.14.191",
     "@types/node": "^18.14.2",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.1.0",
@@ -28,6 +36,7 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
+    "supabase": "^1.41.4",
     "tailwindcss": "^3.2.7",
     "typescript": "~4.8.4",
     "vite": "^4.1.4",
