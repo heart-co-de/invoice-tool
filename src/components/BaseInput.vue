@@ -3,8 +3,37 @@
     <label :for="nameKebabCase" class="block text-sm font-medium leading-6 text-gray-900">
       {{ label || name }}
     </label>
-    <div class="relative mt-2 rounded-md shadow-sm">
+    <div
+      class="relative mt-2 rounded-md"
+      :class="{
+        'shadow-sm': type !== 'checkbox',
+      }"
+    >
+      <div v-if="type === 'checkbox'" class="flex items-center space-x-4">
+        <input
+          :type="type"
+          :name="nameKebabCase"
+          :id="nameKebabCase"
+          class="rounded-md border-0 py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+          :class="{
+            'text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500 pr-10':
+              validationMessage,
+            'text-gray-900 ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600':
+              !validationMessage,
+          }"
+          :placeholder="placeholder"
+          v-model="model"
+          :autocomplete="autocompleteComputed"
+          :aria-invalid="!!validationMessage"
+          :aria-describedby="validationMessage ? `${nameKebabCase}-error` : ''"
+          :required="!!required"
+        />
+        <label :for="nameKebabCase" class="text-sm text-gray-700">
+          {{ label || name }}
+        </label>
+      </div>
       <input
+        v-else
         :type="type"
         :name="nameKebabCase"
         :id="nameKebabCase"
@@ -42,8 +71,8 @@ import { kebabCase } from 'lodash'
 
 const props = defineProps<{
   name: string
-  type: 'email' | 'text' | 'password'
-  modelValue: string
+  type: 'email' | 'text' | 'password' | 'checkbox'
+  modelValue: string | boolean
   label?: string
   validationMessage?: string
   placeholder?: string
@@ -52,7 +81,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
+  (e: 'update:modelValue', value: string | boolean): void
 }>()
 
 const model = computed({

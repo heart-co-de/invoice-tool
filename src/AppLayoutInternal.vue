@@ -143,7 +143,9 @@
             </a>
           </nav>
         </div>
-        <div class="flex flex-shrink-0 p-4 border-t border-gray-200">
+        <div v-if="isUserDataLoading">Loading...</div>
+        <div v-if="isUserDataError">Error Loading User Data</div>
+        <div v-else class="flex flex-shrink-0 p-4 border-t border-gray-200">
           <RouterLink to="/me" class="flex-shrink-0 block w-full group">
             <div class="flex items-center">
               <div>
@@ -154,7 +156,9 @@
                 />
               </div>
               <div class="ml-3">
-                <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
+                <p class="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                  {{ userData?.name }}
+                </p>
                 <p class="text-xs font-medium text-gray-500 group-hover:text-gray-700">
                   View profile
                 </p>
@@ -181,7 +185,7 @@
             <h1 class="text-2xl font-semibold text-gray-900">{{ pageTitle }}</h1>
           </div>
           <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <slot />
+            <RouterView />
           </div>
         </div>
       </main>
@@ -203,6 +207,7 @@ import {
   UsersIcon,
   XMarkIcon,
 } from '@heroicons/vue/24/outline'
+import { useUserData } from './api/useUserData'
 
 const pageTitle = computed(() => useRoute().meta.pageTitle)
 
@@ -216,4 +221,6 @@ const navigation = [
 ]
 
 const sidebarOpen = ref(false)
+
+const { data: userData, isError: isUserDataError, isLoading: isUserDataLoading } = useUserData()
 </script>

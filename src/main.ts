@@ -1,11 +1,20 @@
-import { createApp } from 'vue'
+import { createApp, type App as VueApp } from 'vue'
 import App from './App.vue'
-import router from './router'
 
 import './assets/tailwind.css'
 
 const app = createApp(App)
 
-app.use(router)
+const plugins = import.meta.glob('./plugins/*.ts', {
+  import: 'default',
+  eager: true,
+})
+
+for (const path in plugins) {
+  if (Object.prototype.hasOwnProperty.call(plugins, path)) {
+    const initPlugin = plugins[path] as (app: VueApp) => void
+    initPlugin(app)
+  }
+}
 
 app.mount('#app')
