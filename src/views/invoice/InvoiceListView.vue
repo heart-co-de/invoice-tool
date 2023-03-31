@@ -1,8 +1,8 @@
 <template>
   <div class="mt-4 overflow-hidden bg-white shadow sm:rounded-md">
     <ul role="list" class="divide-y divide-gray-200">
-      <li v-for="customer in customerList" :key="customer.id">
-        <router-link :to="`/customer/${customer.id}`" class="block hover:bg-gray-50">
+      <li v-for="invoice in invoiceList" :key="invoice.id">
+        <router-link :to="`/invoice/${invoice.id}`" class="block hover:bg-gray-50">
           <div class="flex items-center px-4 py-4 sm:px-6">
             <div class="flex items-center flex-1 min-w-0">
               <div class="flex-shrink-0">
@@ -15,14 +15,14 @@
               <div class="flex-1 min-w-0 px-4 md:grid md:grid-cols-2 md:gap-4">
                 <div>
                   <p class="text-sm font-medium text-indigo-600 truncate">
-                    {{ customer.name }}
+                    {{ invoice.invoice_number }}
                   </p>
                   <p class="flex items-center mt-2 text-sm text-gray-500">
                     <EnvelopeIcon
                       class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                       aria-hidden="true"
                     />
-                    <span class="truncate">{{ getAddressInOneLine(customer) }}</span>
+                    <span class="truncate">{{ invoice.for_month }}.{{ invoice.for_year }}</span>
                   </p>
                 </div>
                 <div class="hidden md:block">
@@ -30,8 +30,8 @@
                     <p class="text-sm text-gray-900">
                       Created At
                       {{ ' ' }}
-                      <time :datetime="customer.created_at || undefined">
-                        {{ customer.created_at }}
+                      <time :datetime="invoice.created_at || undefined">
+                        {{ invoice.created_at }}
                       </time>
                     </p>
                     <p class="flex items-center mt-2 text-sm text-gray-500">
@@ -39,7 +39,7 @@
                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      {{ customer.default_price_per_hour }}
+                      {{ invoice.user_id }}
                     </p>
                   </div>
                 </div>
@@ -56,9 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCustomerList } from '@/api/useCustomer'
-import { getAddressInOneLine } from '@/utils/addressHelpers'
+import { useInvoiceList } from '@/api/useInvoice'
 import { ChevronRightIcon, EnvelopeIcon, CurrencyEuroIcon } from '@heroicons/vue/20/solid'
 
-const { data: customerList } = useCustomerList()
+const { data: invoiceList } = useInvoiceList()
 </script>

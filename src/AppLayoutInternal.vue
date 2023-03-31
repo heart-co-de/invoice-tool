@@ -180,11 +180,20 @@
         </button>
       </div>
       <main class="flex-1">
-        <div class="py-6">
-          <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <h1 class="text-2xl font-semibold text-gray-900">{{ pageTitle }}</h1>
+        <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div class="pb-5 border-b border-gray-200 sm:flex sm:items-center sm:justify-between">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{{ pageTitle }}</h3>
+            <div v-if="pageAction" class="mt-3 sm:ml-4 sm:mt-0">
+              <router-link
+                :to="pageAction.route"
+                class="inline-flex items-center px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                {{ pageAction.name }}
+              </router-link>
+            </div>
           </div>
-          <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+          <div class="">
             <RouterView />
           </div>
         </div>
@@ -199,27 +208,22 @@ import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessu
 import { RouterLink, useRoute } from 'vue-router'
 import {
   Bars3Icon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
   HomeIcon,
-  InboxIcon,
   UsersIcon,
   XMarkIcon,
+  DocumentTextIcon,
 } from '@heroicons/vue/24/outline'
 import { useUserData } from './api/useUserData'
 
 const route = useRoute()
 
 const pageTitle = computed(() => route.meta.pageTitle)
+const pageAction = computed(() => route.meta.pageAction)
 
 const navItems = [
   { name: 'Home', to: '/home', icon: HomeIcon },
   { name: 'Customers', to: '/customer', icon: UsersIcon },
-  { name: 'Projects', to: '#', icon: FolderIcon },
-  { name: 'Calendar', to: '#', icon: CalendarIcon },
-  { name: 'Documents', to: '#', icon: InboxIcon },
-  { name: 'Reports', to: '#', icon: ChartBarIcon },
+  { name: 'Invoices', to: '/invoice', icon: DocumentTextIcon },
 ]
 
 const navigation = computed(() =>

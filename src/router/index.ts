@@ -10,6 +10,10 @@ import AppLayoutExternal from '@/AppLayoutExternal.vue'
 declare module 'vue-router' {
   interface RouteMeta {
     pageTitle?: string
+    pageAction?: {
+      name: string
+      route: string
+    }
     requiresAuth?: boolean
     onlyNonAuthed?: boolean
   }
@@ -77,6 +81,10 @@ const router = createRouter({
           component: () => import('../views/customer/CustomerListView.vue'),
           meta: {
             pageTitle: 'Customers',
+            pageAction: {
+              name: 'New Customer',
+              route: '/customer/new',
+            },
           },
         },
         {
@@ -85,6 +93,25 @@ const router = createRouter({
           component: () => import('../views/customer/CustomerDetailView.vue'),
           meta: {
             pageTitle: 'Customer Details',
+          },
+        },
+        {
+          path: 'invoice',
+          component: () => import('../views/invoice/InvoiceListView.vue'),
+          meta: {
+            pageTitle: 'Invoices',
+            pageAction: {
+              name: 'New Invoice',
+              route: '/invoice/new',
+            },
+          },
+        },
+        {
+          path: 'invoice/:invoiceId',
+          props: (route) => ({ invoiceId: Number(route.params.invoiceId) }),
+          component: () => import('../views/invoice/InvoiceDetailView.vue'),
+          meta: {
+            pageTitle: 'Invoice Details',
           },
         },
       ],

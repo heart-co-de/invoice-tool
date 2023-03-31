@@ -78,7 +78,7 @@ import { kebabCase, omit } from 'lodash'
 
 const props = defineProps<{
   name: string
-  type: 'email' | 'text' | 'password' | 'checkbox' | 'number'
+  type: 'email' | 'text' | 'password' | 'checkbox' | 'number' | 'date'
   modelValue: string | boolean | number
   label?: string
   validationMessage?: string
