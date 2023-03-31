@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$attrs.class">
     <label :for="nameKebabCase" class="block text-sm font-medium leading-6 text-gray-900">
       {{ label || name }}
     </label>
@@ -50,6 +50,7 @@
         :aria-invalid="!!validationMessage"
         :aria-describedby="validationMessage ? `${nameKebabCase}-error` : ''"
         :required="!!required"
+        v-bind="omit($attrs, 'class')"
       />
       <div
         v-if="validationMessage"
@@ -64,15 +65,21 @@
   </div>
 </template>
 
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+}
+</script>
+
 <script setup lang="ts">
 import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
 import { computed } from 'vue'
-import { kebabCase } from 'lodash'
+import { kebabCase, omit } from 'lodash'
 
 const props = defineProps<{
   name: string
-  type: 'email' | 'text' | 'password' | 'checkbox'
-  modelValue: string | boolean
+  type: 'email' | 'text' | 'password' | 'checkbox' | 'number'
+  modelValue: string | boolean | number
   label?: string
   validationMessage?: string
   placeholder?: string
@@ -81,7 +88,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | boolean): void
+  (e: 'update:modelValue', value: typeof props.modelValue): void
 }>()
 
 const model = computed({

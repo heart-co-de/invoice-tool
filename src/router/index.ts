@@ -66,14 +66,25 @@ const router = createRouter({
           component: HomeView,
         },
         {
-          path: 'about',
-          component: () => import('../views/AboutView.vue'),
-        },
-        {
           path: 'me',
           component: () => import('../views/MyProfileView.vue'),
           meta: {
             pageTitle: 'My Settings',
+          },
+        },
+        {
+          path: 'customer',
+          component: () => import('../views/CustomerListView.vue'),
+          meta: {
+            pageTitle: 'Customers',
+          },
+        },
+        {
+          path: 'customer/:customerId',
+          props: (route) => ({ customerId: Number(route.params.customerId) }),
+          component: () => import('../views/CustomerDetailView.vue'),
+          meta: {
+            pageTitle: 'Customer Details',
           },
         },
       ],

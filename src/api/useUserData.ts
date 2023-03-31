@@ -1,6 +1,7 @@
 import { queryClient } from '@/plugins/vueQuery'
 import { supabase } from '@/services/supabase'
 import { useMutation, useQuery } from 'vue-query'
+import { getUserId } from './utils'
 
 export const useUserData = () => {
   return useQuery('userData', async () => {
@@ -16,10 +17,7 @@ export type UpdateUserData = Omit<UserData, 'user_id' | 'created_at'>
 export const useUpdateUserData = () => {
   return useMutation(
     async (userData: UpdateUserData) => {
-      const { error, data } = await supabase.auth.getSession()
-      if (error) throw error
-      if (!data.session) throw new Error('No user session')
-      const userId = data.session?.user.id
+      const userId = await getUserId()
       return supabase
         .from('user_data')
         .upsert({

@@ -54,10 +54,10 @@
                   />
                 </div>
                 <nav class="px-2 mt-5 space-y-1">
-                  <a
+                  <RouterLink
                     v-for="item in navigation"
                     :key="item.name"
-                    :href="item.href"
+                    :to="item.to"
                     :class="[
                       item.current
                         ? 'bg-gray-100 text-gray-900'
@@ -74,7 +74,7 @@
                       aria-hidden="true"
                     />
                     {{ item.name }}
-                  </a>
+                  </RouterLink>
                 </nav>
               </div>
               <div class="flex flex-shrink-0 p-4 border-t border-gray-200">
@@ -120,10 +120,10 @@
             />
           </div>
           <nav class="flex-1 px-2 mt-5 space-y-1 bg-white">
-            <a
+            <RouterLink
               v-for="item in navigation"
               :key="item.name"
-              :href="item.href"
+              :to="item.to"
               :class="[
                 item.current
                   ? 'bg-gray-100 text-gray-900'
@@ -140,7 +140,7 @@
                 aria-hidden="true"
               />
               {{ item.name }}
-            </a>
+            </RouterLink>
           </nav>
         </div>
         <div v-if="isUserDataLoading">Loading...</div>
@@ -209,16 +209,25 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useUserData } from './api/useUserData'
 
-const pageTitle = computed(() => useRoute().meta.pageTitle)
+const route = useRoute()
 
-const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: InboxIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
+const pageTitle = computed(() => route.meta.pageTitle)
+
+const navItems = [
+  { name: 'Home', to: '/home', icon: HomeIcon },
+  { name: 'Customers', to: '/customer', icon: UsersIcon },
+  { name: 'Projects', to: '#', icon: FolderIcon },
+  { name: 'Calendar', to: '#', icon: CalendarIcon },
+  { name: 'Documents', to: '#', icon: InboxIcon },
+  { name: 'Reports', to: '#', icon: ChartBarIcon },
 ]
+
+const navigation = computed(() =>
+  navItems.map((navItem) => ({
+    ...navItem,
+    current: route.path.startsWith(navItem.to),
+  })),
+)
 
 const sidebarOpen = ref(false)
 
