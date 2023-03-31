@@ -1,9 +1,9 @@
 import { supabase } from '../services/supabase'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import ForgotPasswordView from '../views/ForgotPasswordView.vue'
-import ResetPasswordView from '../views/ResetPasswordView.vue'
+import LoginView from '../views/auth/LoginView.vue'
+import ForgotPasswordView from '../views/auth/ForgotPasswordView.vue'
+import ResetPasswordView from '../views/auth/ResetPasswordView.vue'
 import AppLayoutInternal from '@/AppLayoutInternal.vue'
 import AppLayoutExternal from '@/AppLayoutExternal.vue'
 
@@ -74,7 +74,7 @@ const router = createRouter({
         },
         {
           path: 'customer',
-          component: () => import('../views/CustomerListView.vue'),
+          component: () => import('../views/customer/CustomerListView.vue'),
           meta: {
             pageTitle: 'Customers',
           },
@@ -82,7 +82,7 @@ const router = createRouter({
         {
           path: 'customer/:customerId',
           props: (route) => ({ customerId: Number(route.params.customerId) }),
-          component: () => import('../views/CustomerDetailView.vue'),
+          component: () => import('../views/customer/CustomerDetailView.vue'),
           meta: {
             pageTitle: 'Customer Details',
           },

@@ -30,7 +30,7 @@ import { useCustomer, useUpdateCustomer, type UpdateCustomer } from '@/api/useCu
 import BaseInput from '@/components/BaseInput.vue'
 import { omit } from 'lodash'
 import { reactive, toRefs } from 'vue'
-import { onceTruthy } from '../utils/onceTruthy'
+import { onceTruthy } from '../../utils/onceTruthy'
 
 const props = defineProps<{
   customerId?: number
