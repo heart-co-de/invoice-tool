@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="isError">Error: {{ error }}</div>
-  <form @submit.prevent="updateUser" class="space-y-6">
+  <form @submit.prevent="updateInvoice" class="space-y-6">
     <CustomerDropdown v-model="updateInvoiceForm.customer_id" />
     <BaseInput
       name="Invoice Number"
@@ -11,23 +11,36 @@
     />
     <BaseInput name="For Month" type="date" v-model="dateForDatepicker" />
 
-    <button
-      type="submit"
-      class="flex justify-center w-full px-3 py-2 mx-auto text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-    >
-      Save
-    </button>
+    <InvoicePositionTable @create-position="createInvoicePosition">
+      <InvoicePositionItem
+        v-for="(invoicePosition, index) in updateInvoiceForm.invoice_position"
+        :key="index"
+        :invoice-position="invoicePosition"
+        @update:invoice-position="updateInvoicePosition({ index, invoicePosition: $event })"
+      />
+    </InvoicePositionTable>
+
+    <BaseButton class="w-full" type="submit">Save</BaseButton>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useInvoice, useUpdateInvoice, type UpdateInvoice } from '@/api/useInvoice'
+import { useCustomer } from '@/api/useCustomer'
+import {
+  useInvoice,
+  useUpdateInvoice,
+  type InvoicePosition,
+  type UpdateInvoice,
+} from '@/api/useInvoice'
+import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import CustomerDropdown from '@/components/CustomerDropdown.vue'
 import { toDateInputString } from '@/utils/dateTimeHelpers'
 import { omit } from 'lodash'
 import { computed, reactive, toRefs } from 'vue'
 import { onceTruthy } from '../../utils/onceTruthy'
+import InvoicePositionItem from './InvoicePositionItem.vue'
+import InvoicePositionTable from './InvoicePositionTable.vue'
 
 const props = defineProps<{
   invoiceId?: number
@@ -35,12 +48,15 @@ const props = defineProps<{
 
 const { invoiceId } = toRefs(props)
 
+// Form
+
 const updateInvoiceForm = reactive({
   id: invoiceId,
   customer_id: 0,
   for_month: 0,
   for_year: 0,
   invoice_number: 0,
+  invoice_position: [] as InvoicePosition[],
 }) satisfies UpdateInvoice
 
 const dateForDatepicker = computed({
@@ -57,13 +73,51 @@ const dateForDatepicker = computed({
     updateInvoiceForm.for_month = Number(month)
   },
 })
+
+const { data: customer } = useCustomer(computed(() => updateInvoiceForm.customer_id))
+
+// Form: Invoice Positions
+
+const createInvoicePosition = () => {
+  updateInvoiceForm.invoice_position = [
+    ...updateInvoiceForm.invoice_position,
+    {
+      service_date: new Date().toISOString().slice(0, 10),
+      description: '',
+      quantity: 0,
+      unit_quantity: 'Stunde',
+      is_per_hour: true,
+      price_per_quantity: customer.value?.default_price_per_hour || 0,
+      price: 0,
+    },
+  ]
+}
+
+const updateInvoicePosition = ({
+  index,
+  invoicePosition,
+}: {
+  index: number
+  invoicePosition: InvoicePosition
+}) => {
+  updateInvoiceForm.invoice_position = [
+    ...updateInvoiceForm.invoice_position.slice(0, index),
+    invoicePosition,
+    ...updateInvoiceForm.invoice_position.slice(index + 1),
+  ]
+}
+
+// Data Fetching
+
 const { data: invoiceData, isError, isLoading, error } = useInvoice(invoiceId)
 onceTruthy(invoiceData, () => {
   Object.assign(updateInvoiceForm, omit(invoiceData.value, 'id'))
 })
 
+// Data Sending
+
 const { mutate } = useUpdateInvoice()
-const updateUser = () => {
+const updateInvoice = () => {
   mutate(updateInvoiceForm)
 }
 </script>

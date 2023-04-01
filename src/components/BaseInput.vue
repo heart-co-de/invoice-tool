@@ -1,12 +1,17 @@
 <template>
   <div :class="$attrs.class">
-    <label :for="nameKebabCase" class="block text-sm font-medium leading-6 text-gray-900">
+    <label
+      v-if="!isLabelHidden"
+      :for="nameKebabCase"
+      class="block text-sm font-medium leading-6 text-gray-900"
+    >
       {{ label || name }}
     </label>
     <div
-      class="relative mt-2 rounded-md"
+      class="relative rounded-md"
       :class="{
         'shadow-sm': type !== 'checkbox',
+        'mt-2': !isNoMargin,
       }"
     >
       <div v-if="type === 'checkbox'" class="flex items-center space-x-4">
@@ -27,8 +32,9 @@
           :aria-invalid="!!validationMessage"
           :aria-describedby="validationMessage ? `${nameKebabCase}-error` : ''"
           :required="!!required"
+          v-bind="omit($attrs, 'class')"
         />
-        <label :for="nameKebabCase" class="text-sm text-gray-700">
+        <label v-if="!isLabelHidden" :for="nameKebabCase" class="text-sm text-gray-700">
           {{ label || name }}
         </label>
       </div>
@@ -81,6 +87,8 @@ const props = defineProps<{
   type: 'email' | 'text' | 'password' | 'checkbox' | 'number' | 'date'
   modelValue: string | boolean | number
   label?: string
+  isLabelHidden?: boolean
+  isNoMargin?: boolean
   validationMessage?: string
   placeholder?: string
   autocomplete?: string

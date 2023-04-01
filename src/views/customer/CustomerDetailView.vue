@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="isError">Error: {{ error }}</div>
-  <form @submit.prevent="updateUser" class="space-y-6">
+  <form @submit.prevent="updateCustomer" class="space-y-6">
     <BaseInput name="Name" type="text" v-model="updateCustomerForm.name" />
     <BaseInput name="Additional Name" type="text" v-model="updateCustomerForm.name_additional" />
     <BaseInput name="Street" type="text" v-model="updateCustomerForm.street" />
@@ -53,7 +53,7 @@ onceTruthy(customerData, () => {
 })
 
 const { mutate } = useUpdateCustomer()
-const updateUser = () => {
+const updateCustomer = () => {
   mutate(updateCustomerForm)
 }
 </script>
