@@ -35,7 +35,7 @@ import {
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import CustomerDropdown from '@/components/CustomerDropdown.vue'
-import { toDateInputString } from '@/utils/dateTimeHelpers'
+import { toDateInputString } from '@/utils/unitHelpers'
 import { omit } from 'lodash'
 import { computed, reactive, toRefs } from 'vue'
 import { onceTruthy } from '../../utils/onceTruthy'

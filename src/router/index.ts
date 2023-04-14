@@ -116,6 +116,15 @@ const router = createRouter({
         },
       ],
     },
+
+    {
+      path: '/invoice/:invoiceId/print',
+      props: (route) => ({ invoiceId: Number(route.params.invoiceId) }),
+      component: () => import('../views/invoice/InvoicePrintView.vue'),
+      meta: {
+        requiresAuth: true,
+      },
+    },
   ],
 })
 
