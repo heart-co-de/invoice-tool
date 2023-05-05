@@ -90,7 +90,6 @@ const createInvoicePosition = () => {
       description: '',
       quantity: 0,
       unit_quantity: 'Stunde',
-      is_per_hour: true,
       price_per_quantity: customer.value?.default_price_per_hour || 0,
       price: 0,
     },

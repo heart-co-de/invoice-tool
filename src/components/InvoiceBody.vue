@@ -7,7 +7,7 @@
             <th class="w-[20px] pr-1 text-right">#</th>
             <th class="w-24">Leistungsdatum</th>
             <th class="beschreibung">Beschreibung</th>
-            <th class="w-[70px] text-center pr-2">Menge</th>
+            <th class="w-[70px] text-center pr-2" colspan="2">Menge</th>
             <th class="w-[97px]">Preis pro Einheit</th>
             <th class="w-[50px] text-right">Betrag</th>
           </tr>
@@ -29,11 +29,11 @@
             <td class="pr-2">
               <span class="">{{ position.description }}</span>
             </td>
+            <td class="text-right pr-2 font-mono text-[8pt] pt-[2px]">
+              {{ formatQuantity(position.quantity, position.unit_quantity) }}
+            </td>
             <td>
-              <span class="text-right block pr-2">
-                {{ position.quantity }}
-                {{ pluralizeUnitQuantity(position.unit_quantity, position.quantity) }}
-              </span>
+              {{ formatUnit(position.quantity, position.unit_quantity) }}
             </td>
             <td>
               <span class="">
@@ -41,7 +41,9 @@
               </span>
             </td>
             <td>
-              <span class="text-right block">{{ formatAsEuro(position.price) }}</span>
+              <span class="text-right block font-mono text-[8pt] pt-[2px]">
+                {{ formatAsEuro(position.price) }}
+              </span>
             </td>
           </tr>
           <tr class="[&_td]:pt-[3mm]">
@@ -49,9 +51,9 @@
             <td></td>
             <td></td>
             <td></td>
-            <td><span class="font-bold">Summe</span></td>
+            <td colspan="2"><span class="font-bold">Summe</span></td>
             <td>
-              <span class="block text-right font-bold">
+              <span class="block text-right font-bold font-mono text-[8pt] pt-[2px]">
                 {{
                   formatAsEuro(
                     invoice.invoice_position.reduce(
@@ -75,7 +77,7 @@
 <script setup lang="ts">
 import type { Invoice } from '@/api/useInvoice'
 import type { UserData } from '@/api/useUserData'
-import { formatAsDate, formatAsEuro, pluralizeUnitQuantity } from '@/utils/unitHelpers'
+import { formatAsDate, formatAsEuro, formatQuantity, formatUnit } from '@/utils/unitHelpers'
 
 defineProps<{
   userData: UserData

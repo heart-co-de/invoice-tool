@@ -10,7 +10,7 @@
         v-model="serviceDate"
         class="-m-4 -mr-3"
       />
-      <template v-else>{{ serviceDate }}</template>
+      <template v-else>{{ formatAsDate(new Date(serviceDate)) }}</template>
     </td>
     <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
       <BaseInput
@@ -31,10 +31,11 @@
         is-no-margin
         name="Quantity"
         type="number"
+        step="0.01"
         v-model="quantity"
         class="-mx-2 -my-4"
       />
-      <template v-else>{{ quantity }}</template>
+      <template v-else>{{ formatQuantity(quantity, unitQuantity) }}</template>
     </td>
     <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
       <DropdownUnitQuantity
@@ -44,18 +45,7 @@
         v-model="unitQuantity"
         class="-mx-2 -my-4"
       />
-      <template v-else>{{ unitQuantity }}</template>
-    </td>
-    <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
-      <BaseInput
-        is-label-hidden
-        is-no-margin
-        name="Is Per Hour"
-        type="checkbox"
-        v-model="isPerHour"
-        class="flex items-center justify-center"
-        :disabled="!isEditMode"
-      />
+      <template v-else>{{ formatUnit(quantity, unitQuantity) }}</template>
     </td>
     <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
       <BaseInput
@@ -67,10 +57,10 @@
         v-model="pricePerQuantity"
         class="-mx-2 -my-4"
       />
-      <template v-else>{{ pricePerQuantity }}</template>
+      <template v-else>{{ formatAsEuro(pricePerQuantity) }} / {{ unitQuantity }}</template>
     </td>
-    <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
-      {{ price }}
+    <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap text-right">
+      {{ formatAsEuro(price) }}
     </td>
     <td class="relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-0">
       <button
@@ -88,6 +78,8 @@ import BaseInput from '@/components/BaseInput.vue'
 import { computed, ref } from 'vue'
 import type { InvoicePosition } from '../../api/useInvoice'
 import DropdownUnitQuantity from '@/components/DropdownUnitQuantity.vue'
+import { formatAsDate, formatQuantity, formatUnit } from '@/utils/unitHelpers'
+import { formatAsEuro } from '@/utils/unitHelpers'
 
 const props = defineProps<{
   invoicePosition: InvoicePosition
@@ -120,7 +112,6 @@ const serviceDate = createTwoWayBinding('service_date')
 const description = createTwoWayBinding('description')
 const quantity = createTwoWayBinding('quantity')
 const unitQuantity = createTwoWayBinding('unit_quantity')
-const isPerHour = createTwoWayBinding('is_per_hour')
 const pricePerQuantity = createTwoWayBinding('price_per_quantity')
 const price = computed(() => props.invoicePosition.price)
 

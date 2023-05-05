@@ -79,7 +79,6 @@ export interface Database {
           description: string
           id: number
           invoice_id: number
-          is_per_hour: boolean
           price: number
           price_per_quantity: number
           quantity: number
@@ -92,7 +91,6 @@ export interface Database {
           description?: string
           id?: number
           invoice_id: number
-          is_per_hour?: boolean
           price: number
           price_per_quantity: number
           quantity: number
@@ -105,7 +103,6 @@ export interface Database {
           description?: string
           id?: number
           invoice_id?: number
-          is_per_hour?: boolean
           price?: number
           price_per_quantity?: number
           quantity?: number
