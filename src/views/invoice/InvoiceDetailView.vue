@@ -2,7 +2,7 @@
   <div v-if="isLoading">Loading...</div>
   <div v-else-if="isError">Error: {{ error }}</div>
   <form @submit.prevent="updateInvoice" class="space-y-6">
-    <CustomerDropdown v-model="updateInvoiceForm.customer_id" />
+    <DropdownCustomer v-model="updateInvoiceForm.customer_id" />
     <BaseInput
       name="Invoice Number"
       type="number"
@@ -20,7 +20,10 @@
       />
     </InvoicePositionTable>
 
-    <BaseButton class="w-full" type="submit">Save</BaseButton>
+    <div class="grid grid-cols-2 space-x-2">
+      <BaseButton type="submit">Save</BaseButton>
+      <BaseButton @click="goToPrint">Print</BaseButton>
+    </div>
   </form>
 </template>
 
@@ -34,13 +37,14 @@ import {
 } from '@/api/useInvoice'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
-import CustomerDropdown from '@/components/CustomerDropdown.vue'
+import DropdownCustomer from '@/components/DropdownCustomer.vue'
 import { toDateInputString } from '@/utils/unitHelpers'
 import { omit } from 'lodash'
 import { computed, reactive, toRefs } from 'vue'
 import { onceTruthy } from '../../utils/onceTruthy'
 import InvoicePositionItem from './InvoicePositionItem.vue'
 import InvoicePositionTable from './InvoicePositionTable.vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps<{
   invoiceId?: number
@@ -119,5 +123,11 @@ onceTruthy(invoiceData, () => {
 const { mutate } = useUpdateInvoice()
 const updateInvoice = () => {
   mutate(updateInvoiceForm)
+}
+
+// Navigation
+const router = useRouter()
+const goToPrint = () => {
+  router.push(`/invoice/${invoiceId?.value}/print`)
 }
 </script>

@@ -37,12 +37,10 @@
       <template v-else>{{ quantity }}</template>
     </td>
     <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">
-      <BaseInput
+      <DropdownUnitQuantity
         v-if="isEditMode"
         is-label-hidden
         is-no-margin
-        name="Unit Quantity"
-        type="text"
         v-model="unitQuantity"
         class="-mx-2 -my-4"
       />
@@ -89,6 +87,7 @@
 import BaseInput from '@/components/BaseInput.vue'
 import { computed, ref } from 'vue'
 import type { InvoicePosition } from '../../api/useInvoice'
+import DropdownUnitQuantity from '@/components/DropdownUnitQuantity.vue'
 
 const props = defineProps<{
   invoicePosition: InvoicePosition

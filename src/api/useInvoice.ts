@@ -6,6 +6,7 @@ import { omit } from 'lodash'
 import { computed, unref } from 'vue'
 import { useMutation, useQuery } from 'vue-query'
 import { getUserId } from './utils'
+import { unitQuantitySchema, type UnitQuantity } from '@/utils/unitHelpers'
 
 export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
   return useQuery(
@@ -27,11 +28,18 @@ export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
         ...data[0],
         invoice_position:
           data[0].invoice_position && 'length' in data[0].invoice_position
-            ? data[0].invoice_position.sort(
-                (a, b) =>
-                  (new Date(a.service_date) as unknown as number) -
-                  (new Date(b.service_date) as unknown as number),
-              )
+            ? data[0].invoice_position
+                .sort(
+                  (a, b) =>
+                    (new Date(a.service_date) as unknown as number) -
+                    (new Date(b.service_date) as unknown as number),
+                )
+                .map((position) => ({
+                  ...position,
+                  unit_quantity: (unitQuantitySchema.safeParse(position.unit_quantity).success
+                    ? position.unit_quantity
+                    : 'Stunde') as UnitQuantity,
+                }))
             : [],
       }
     },

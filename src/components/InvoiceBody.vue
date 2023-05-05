@@ -31,7 +31,8 @@
             </td>
             <td>
               <span class="text-right block pr-2">
-                {{ position.quantity }} {{ position.unit_quantity }}n
+                {{ position.quantity }}
+                {{ pluralizeUnitQuantity(position.unit_quantity, position.quantity) }}
               </span>
             </td>
             <td>
@@ -74,7 +75,7 @@
 <script setup lang="ts">
 import type { Invoice } from '@/api/useInvoice'
 import type { UserData } from '@/api/useUserData'
-import { formatAsDate, formatAsEuro } from '@/utils/unitHelpers'
+import { formatAsDate, formatAsEuro, pluralizeUnitQuantity } from '@/utils/unitHelpers'
 
 defineProps<{
   userData: UserData
