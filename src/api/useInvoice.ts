@@ -8,6 +8,53 @@ import { useMutation, useQuery } from 'vue-query'
 import { getUserId } from './utils'
 import { unitQuantitySchema, type UnitQuantity } from '@/utils/unitHelpers'
 
+type MaybeArray<T> = T | T[]
+type UnArray<T> = T extends (infer U)[] ? U : T
+
+const arrayify = <T>(value: MaybeArray<T> | null) =>
+  Array.isArray(value) ? value : value == null ? [] : [value]
+
+const arrayifyProps = <TObj extends Record<string, unknown>, TKey extends keyof TObj>(
+  obj: TObj,
+  keys: TKey[],
+) =>
+  keys.reduce((obj, key) => ({ ...obj, [key]: arrayify(obj[key]) }), obj) as TObj & {
+    [key in TKey]: UnArray<NonNullable<TObj[key]>>[]
+  }
+
+const mapInvoice = <
+  TInvoice extends {
+    invoice_position: MaybeArray<{
+      unit_quantity: string
+      service_date: string
+      price: number
+    }> | null
+    customer: MaybeArray<unknown> | null
+  },
+>(
+  _invoice: TInvoice,
+) => {
+  type InvoicePosition = Array<UnArray<NonNullable<TInvoice['invoice_position']>>>
+  const invoice = arrayifyProps(_invoice, ['invoice_position', 'customer'])
+  const invoicePosition: InvoicePosition = invoice.invoice_position
+  return {
+    ...invoice,
+    total_price: invoicePosition.reduce((sum, position) => sum + position.price, 0),
+    invoice_position: invoicePosition
+      .sort(
+        (a, b) =>
+          (new Date(a.service_date) as unknown as number) -
+          (new Date(b.service_date) as unknown as number),
+      )
+      .map((position) => ({
+        ...position,
+        unit_quantity: (unitQuantitySchema.safeParse(position.unit_quantity).success
+          ? position.unit_quantity
+          : 'Stunde') as UnitQuantity,
+      })),
+  }
+}
+
 export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
   return useQuery(
     ['invoice', invoiceId],
@@ -19,29 +66,15 @@ export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
           *,
           invoice_position (
             *
+          ),
+          customer (
+            *
           )
         `,
         )
         .eq('id', unref(invoiceId))
       if (error) throw error
-      return {
-        ...data[0],
-        invoice_position:
-          data[0].invoice_position && 'length' in data[0].invoice_position
-            ? data[0].invoice_position
-                .sort(
-                  (a, b) =>
-                    (new Date(a.service_date) as unknown as number) -
-                    (new Date(b.service_date) as unknown as number),
-                )
-                .map((position) => ({
-                  ...position,
-                  unit_quantity: (unitQuantitySchema.safeParse(position.unit_quantity).success
-                    ? position.unit_quantity
-                    : 'Stunde') as UnitQuantity,
-                }))
-            : [],
-      }
+      return mapInvoice(data[0])
     },
     {
       enabled: computed(() => !!unref(invoiceId)),
@@ -51,15 +84,23 @@ export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
 
 export const useInvoiceList = () => {
   return useQuery('invoice', async () => {
-    const { data, error } = await supabase.from('invoice').select('*')
+    const { data, error } = await supabase.from('invoice').select(`
+      *,
+      invoice_position (
+        *
+      ),
+      customer (
+        *
+      )
+    `)
     if (error) throw error
-    return data
+    return data.map(mapInvoice)
   })
 }
 
 export type Invoice = NonNullable<ReturnType<typeof useInvoice>['data']['value']>
 export type UpdateInvoice = MakeOptional<
-  Omit<Invoice, 'user_id' | 'created_at' | 'invoice_position'>,
+  Omit<Invoice, 'user_id' | 'created_at' | 'invoice_position' | 'total_price' | 'customer'>,
   'id'
 > & { invoice_position: InvoicePosition[] }
 export type InvoicePosition = MakeOptional<

@@ -19,11 +19,12 @@ const euroFormatter = new Intl.NumberFormat('de-DE', { style: 'currency', curren
 export const formatAsEuro = (number: number) => euroFormatter.format(number)
 
 // UnitQuantity
-export const unitQuantitySchema = z.enum(['Stunde', 'Monat'])
+export const unitQuantitySchema = z.enum(['Stunde', 'Monat', 'Stück'])
 export type UnitQuantity = z.infer<typeof unitQuantitySchema>
 const unitVariations = {
   Stunde: { singular: 'Stunde', plural: 'Stunden', isPerHour: true },
   Monat: { singular: 'Monat', plural: 'Monate', isPerHour: false },
+  Stück: { singular: 'Stück', plural: 'Stück', isPerHour: false },
 } satisfies Record<UnitQuantity, { singular: string; plural: string; isPerHour: boolean }>
 const pluralizeUnitQuantity = (unitQuantity: UnitQuantity, count: number) => {
   const { singular, plural } = unitVariations[unitQuantity]

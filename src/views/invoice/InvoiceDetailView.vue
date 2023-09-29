@@ -21,7 +21,7 @@
     </InvoicePositionTable>
 
     <div class="grid grid-cols-2 space-x-2">
-      <BaseButton type="submit">Save</BaseButton>
+      <BaseButton type="submit">Save {{ isSubmitting ? '...' : '' }}</BaseButton>
       <BaseButton @click="goToPrint">Print</BaseButton>
     </div>
   </form>
@@ -119,7 +119,7 @@ onceTruthy(invoiceData, () => {
 
 // Data Sending
 
-const { mutate } = useUpdateInvoice()
+const { mutate, isLoading: isSubmitting } = useUpdateInvoice()
 const updateInvoice = () => {
   mutate(updateInvoiceForm)
 }

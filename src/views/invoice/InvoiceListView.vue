@@ -15,7 +15,7 @@
               <div class="flex-1 min-w-0 px-4 md:grid md:grid-cols-2 md:gap-4">
                 <div>
                   <p class="text-sm font-medium text-indigo-600 truncate">
-                    {{ invoice.invoice_number }}
+                    {{ invoice.invoice_number }} - {{ invoice.customer[0].name }}
                   </p>
                   <p class="flex items-center mt-2 text-sm text-gray-500">
                     <EnvelopeIcon
@@ -28,18 +28,14 @@
                 <div class="hidden md:block">
                   <div>
                     <p class="text-sm text-gray-900">
-                      Created At
-                      {{ ' ' }}
-                      <time :datetime="invoice.created_at || undefined">
-                        {{ invoice.created_at }}
-                      </time>
+                      For Customer: {{ invoice.customer[0].name }}
                     </p>
                     <p class="flex items-center mt-2 text-sm text-gray-500">
                       <CurrencyEuroIcon
                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      {{ invoice.user_id }}
+                      {{ invoice.total_price }}
                     </p>
                   </div>
                 </div>
