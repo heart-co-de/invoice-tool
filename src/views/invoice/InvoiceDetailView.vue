@@ -22,7 +22,7 @@
 
     <div class="grid grid-cols-2 space-x-2">
       <BaseButton type="submit">Save {{ isSubmitting ? '...' : '' }}</BaseButton>
-      <BaseButton @click="goToPrint">Print</BaseButton>
+      <BaseButton :disabled="!canGoToPrint" @click="goToPrint">Print</BaseButton>
     </div>
   </form>
 </template>
@@ -34,6 +34,7 @@ import {
   useUpdateInvoice,
   type InvoicePosition,
   type UpdateInvoice,
+  useNextInvoiceNumber,
 } from '@/api/useInvoice'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
@@ -112,21 +113,35 @@ const updateInvoicePosition = ({
 
 // Data Fetching
 
-const { data: invoiceData, isError, isLoading, error } = useInvoice(invoiceId)
+const { data: invoiceData, isError, isLoading: isLoadingInvoice, error } = useInvoice(invoiceId)
 onceTruthy(invoiceData, () => {
   Object.assign(updateInvoiceForm, omit(invoiceData.value, 'id'))
 })
 
+const { nextInvoiceNumber, isLoading: isLoadingNextInvoiceNumber } = useNextInvoiceNumber()
+const finalInvoiceNumber = computed(() => {
+  if (invoiceId?.value) return invoiceData.value?.invoice_number
+  return nextInvoiceNumber.value
+})
+onceTruthy(finalInvoiceNumber, (finalInvoiceNumber) => {
+  updateInvoiceForm.invoice_number = finalInvoiceNumber
+})
+
+const isLoading = computed(() => isLoadingInvoice.value || isLoadingNextInvoiceNumber.value)
+
 // Data Sending
 
-const { mutate, isLoading: isSubmitting } = useUpdateInvoice()
-const updateInvoice = () => {
-  mutate(updateInvoiceForm)
+const { mutateAsync, isLoading: isSubmitting } = useUpdateInvoice()
+const updateInvoice = async () => {
+  const result = await mutateAsync(updateInvoiceForm)
+  if (!invoiceId?.value) router.replace(`/invoice/${result.invoiceId}`)
 }
 
 // Navigation
 const router = useRouter()
+const canGoToPrint = computed(() => !!invoiceId?.value)
 const goToPrint = () => {
+  if (!canGoToPrint.value) return
   router.push(`/invoice/${invoiceId?.value}/print`)
 }
 </script>

@@ -55,6 +55,21 @@ const mapInvoice = <
   }
 }
 
+export const useNextInvoiceNumber = () => {
+  const invoiceListQuery = useInvoiceList()
+
+  const nextInvoiceNumber = computed(() => {
+    const invoiceList = invoiceListQuery.data?.value ?? []
+    const lastInvoiceNumber = Math.max(...invoiceList.map((invoice) => invoice.invoice_number))
+    return lastInvoiceNumber + 1
+  })
+
+  return {
+    nextInvoiceNumber,
+    ...invoiceListQuery,
+  }
+}
+
 export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
   return useQuery(
     ['invoice', invoiceId],
@@ -142,6 +157,8 @@ export const useUpdateInvoice = () => {
         .from('invoice_position')
         .insert(invoicePositionsToInsert)
       if (invoicePositionsInsertError) throw invoicePositionsInsertError
+
+      return { invoiceId }
     },
     {
       onSuccess: () => {
