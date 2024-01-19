@@ -25,6 +25,13 @@
       <BaseButton :disabled="!canGoToPrint" @click="goToPrint">Print</BaseButton>
     </div>
   </form>
+  <InvoiceCalendarList
+    class="mt-6"
+    :customerId="updateInvoiceForm.customer_id"
+    :month="updateInvoiceForm.for_month"
+    :year="updateInvoiceForm.for_year"
+    @importCalendarEvents="addCalendarEventsToInvoicePositions($event)"
+  />
 </template>
 
 <script setup lang="ts">
@@ -46,6 +53,8 @@ import { onceTruthy } from '../../utils/onceTruthy'
 import InvoicePositionItem from './InvoicePositionItem.vue'
 import InvoicePositionTable from './InvoicePositionTable.vue'
 import { useRouter } from 'vue-router'
+import InvoiceCalendarList from './InvoiceCalendarList.vue'
+import type { CalendarEvent } from '@/api/useCalendar'
 
 const props = defineProps<{
   invoiceId?: number
@@ -128,6 +137,27 @@ onceTruthy(finalInvoiceNumber, (finalInvoiceNumber) => {
 })
 
 const isLoading = computed(() => isLoadingInvoice.value || isLoadingNextInvoiceNumber.value)
+
+// Import Calendar Events
+
+const addCalendarEventsToInvoicePositions = (calendarEvents: CalendarEvent[]) => {
+  updateInvoiceForm.invoice_position = [
+    ...updateInvoiceForm.invoice_position,
+    ...calendarEvents.map(
+      (calendarEvent) =>
+        ({
+          service_date: new Date(calendarEvent.year, calendarEvent.month, calendarEvent.day)
+            .toISOString()
+            .slice(0, 10),
+          description: calendarEvent.title,
+          quantity: calendarEvent.durationInHours,
+          unit_quantity: 'Stunde',
+          price_per_quantity: customer.value?.default_price_per_hour || 0,
+          price: calendarEvent.durationInHours * (customer.value?.default_price_per_hour || 0),
+        } satisfies InvoicePosition),
+    ),
+  ]
+}
 
 // Data Sending
 
