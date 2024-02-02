@@ -1,0 +1,13 @@
+name: 'Deploy'
+description: 'Deploy the project to GitHub Pages'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create 404 Page
+      run: cp dist/index.html dist/404.html
+      shell: bash
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: dist

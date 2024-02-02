@@ -46,6 +46,7 @@ const updateCustomerForm = reactive({
   zip: '',
   city: '',
   default_price_per_hour: 0,
+  ical_url: '',
 }) satisfies UpdateCustomer
 const { data: customerData, isError, isLoading, error } = useCustomer(customerId)
 onceTruthy(customerData, () => {

@@ -1,0 +1,17 @@
+name: 'Setup'
+description: 'Sets up Node.js and installs dependencies'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Activate Corepack
+      run: corepack enable pnpm
+      shell: bash
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'pnpm'
+    - name: Install Dependencies
+      run: pnpm i
+      shell: bash

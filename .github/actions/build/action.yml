@@ -1,0 +1,9 @@
+name: 'Build'
+description: 'Build the project'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build
+      run: pnpm run build
+      shell: bash

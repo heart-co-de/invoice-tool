@@ -1,0 +1,12 @@
+name: 'Lint'
+description: 'Lint using ESLint and Prettier'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Lint
+      run: pnpm run lint
+      shell: bash
+    - name: Check Formatting
+      run: pnpm run lint:prettier
+      shell: bash

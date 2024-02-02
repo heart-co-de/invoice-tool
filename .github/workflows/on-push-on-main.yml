@@ -1,0 +1,26 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: ['main']
+
+permissions:
+  contents: write
+
+env:
+  VITE_SUPABASE_API_URL: ${{ vars.VITE_SUPABASE_API_URL }}
+  VITE_SUPABASE_API_KEY: ${{ vars.VITE_SUPABASE_API_KEY }}
+  SUPABASE_PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID }}
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Build
+        uses: ./.github/actions/build
+      - name: Deploy
+        uses: ./.github/actions/deploy

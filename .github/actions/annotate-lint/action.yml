@@ -1,0 +1,13 @@
+name: 'Annotate Linting Results'
+description: 'Annotates linting results on pull requests'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create Lint Report
+      run: pnpm run lint:report
+      shell: bash
+    - name: Annotate Linting Results
+      uses: ataylorme/eslint-annotate-action@v2
+      with:
+        fail-on-warning: true
