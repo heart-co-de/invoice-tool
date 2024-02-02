@@ -27,7 +27,7 @@ export const useUpdateUserData = () => {
         .select()
     },
     {
-      onSuccess: (data, variables, context) => {
+      onSuccess: (_data, _variables, _context) => {
         queryClient.invalidateQueries({
           queryKey: 'userData',
         })
