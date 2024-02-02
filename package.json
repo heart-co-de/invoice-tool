@@ -13,7 +13,11 @@
     "lint:fix": "pnpm lint --fix",
     "lint:prettier": "prettier --check .",
     "format": "prettier --write src/",
-    "supabase:pull": "source .env && source .env.local && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/services/supabase.types.ts"
+    "supabase:pull": "source .env && source .env.local && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/services/supabase.types.ts",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.12",
@@ -40,6 +44,8 @@
     "autoprefixer": "^10.4.13",
     "eslint": "^8.36.0",
     "eslint-plugin-vue": "^9.9.0",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.1",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
