@@ -9,6 +9,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --max-warnings 0 --report-unused-disable-directives",
+    "lint:report": "pnpm run lint --output-file eslint_report.json --format json || exit 0",
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --max-warnings 0 --report-unused-disable-directives --fix",
     "lint:prettier": "prettier --check .",
     "format": "prettier --write src/",

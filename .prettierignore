@@ -17,6 +17,8 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
+eslint_report.json
+
 # Editor directories and files
 .idea
 *.suo
