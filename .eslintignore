@@ -18,6 +18,7 @@ coverage
 /cypress/screenshots/
 
 eslint_report.json
+postcss.config.js
 
 # Editor directories and files
 .idea
