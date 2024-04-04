@@ -10,11 +10,33 @@
     <div
       class="relative rounded-md"
       :class="{
-        'shadow-sm': type !== 'checkbox',
+        'shadow-sm': type !== 'checkbox' && type !== 'image',
         'mt-2': !isNoMargin,
       }"
     >
-      <div v-if="type === 'checkbox'" class="flex items-center space-x-4">
+      <div v-if="type === 'image'" class="mt-2 flex items-center gap-x-3">
+        <UserCircleIcon v-if="!modelValue" class="h-12 w-12 text-gray-300" aria-hidden="true" />
+        <img v-else :src="String(modelValue)" alt="" class="h-12 w-12 rounded-full" />
+        <input
+          ref="fileRef"
+          type="file"
+          class="sr-only"
+          accept="image/*"
+          multiple="false"
+          :name="nameKebabCase"
+          :id="nameKebabCase"
+          @change="uploadImageFromInput"
+          v-bind="omit($attrs, 'class')"
+        />
+        <button
+          type="button"
+          class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          @click="fileRef?.click()"
+        >
+          Change
+        </button>
+      </div>
+      <div v-else-if="type === 'checkbox'" class="flex items-center space-x-4">
         <input
           :type="type"
           :name="nameKebabCase"
@@ -78,13 +100,14 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ExclamationCircleIcon } from '@heroicons/vue/20/solid'
-import { computed } from 'vue'
+import { ExclamationCircleIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
+import { computed, ref } from 'vue'
 import { kebabCase, omit } from 'lodash'
+import { useImageBucketUpload } from '@/api/useImageBucket'
 
 const props = defineProps<{
   name: string
-  type: 'email' | 'text' | 'password' | 'checkbox' | 'number' | 'date'
+  type: 'email' | 'text' | 'password' | 'checkbox' | 'number' | 'date' | 'image'
   modelValue: string | boolean | number
   label?: string
   isLabelHidden?: boolean
@@ -112,4 +135,16 @@ const autocompleteComputed = computed(() => {
 })
 
 const nameKebabCase = computed(() => kebabCase(props.name))
+
+const fileRef = ref<HTMLInputElement | null>(null)
+
+const { mutateAsync: uploadImage } = useImageBucketUpload()
+const uploadImageFromInput = async (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    const { url } = await uploadImage(file)
+    model.value = url
+  }
+}
 </script>

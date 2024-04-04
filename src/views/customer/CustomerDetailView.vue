@@ -15,6 +15,7 @@
       min="0"
       v-model="updateCustomerForm.default_price_per_hour"
     />
+    <BaseInput name="Image" type="image" v-model="updateCustomerForm.image_url" />
 
     <button
       type="submit"
@@ -47,6 +48,7 @@ const updateCustomerForm = reactive({
   city: '',
   default_price_per_hour: 0,
   ical_url: '',
+  image_url: '',
 }) satisfies UpdateCustomer
 const { data: customerData, isError, isLoading, error } = useCustomer(customerId)
 onceTruthy(customerData, () => {

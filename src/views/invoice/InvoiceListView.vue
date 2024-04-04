@@ -6,10 +6,16 @@
           <div class="flex items-center px-4 py-4 sm:px-6">
             <div class="flex items-center flex-1 min-w-0">
               <div class="flex-shrink-0">
+                <UserCircleIcon
+                  v-if="!invoice.customer[0].image_url"
+                  class="h-12 w-12 text-gray-300"
+                  aria-hidden="true"
+                />
                 <img
-                  class="w-12 h-12 rounded-full"
-                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  v-else
+                  :src="invoice.customer[0].image_url"
                   alt=""
+                  class="h-12 w-12 rounded-full"
                 />
               </div>
               <div class="flex-1 min-w-0 px-4 md:grid md:grid-cols-2 md:gap-4">
@@ -53,7 +59,12 @@
 
 <script setup lang="ts">
 import { useInvoiceList } from '@/api/useInvoice'
-import { ChevronRightIcon, EnvelopeIcon, CurrencyEuroIcon } from '@heroicons/vue/20/solid'
+import {
+  ChevronRightIcon,
+  EnvelopeIcon,
+  CurrencyEuroIcon,
+  UserCircleIcon,
+} from '@heroicons/vue/20/solid'
 
 const { data: invoiceList } = useInvoiceList()
 </script>

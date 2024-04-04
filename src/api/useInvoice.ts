@@ -6,7 +6,7 @@ import { omit } from 'lodash'
 import { computed, unref } from 'vue'
 import { useMutation, useQuery } from 'vue-query'
 import { getUserId } from './utils'
-import { unitQuantitySchema, type UnitQuantity } from '@/utils/unitHelpers'
+import { unitQuantitySchema } from '@/utils/unitHelpers'
 
 type MaybeArray<T> = T | T[]
 type UnArray<T> = T extends (infer U)[] ? U : T
@@ -48,9 +48,9 @@ const mapInvoice = <
       )
       .map((position) => ({
         ...position,
-        unit_quantity: (unitQuantitySchema.safeParse(position.unit_quantity).success
-          ? position.unit_quantity
-          : 'Stunde') as UnitQuantity,
+        unit_quantity: unitQuantitySchema.safeParse(position.unit_quantity).success
+          ? unitQuantitySchema.parse(position.unit_quantity)
+          : 'Stunde',
       })),
   }
 }
@@ -99,7 +99,10 @@ export const useInvoice = (invoiceId: MaybeRef<number | undefined>) => {
 
 export const useInvoiceList = () => {
   return useQuery('invoice', async () => {
-    const { data, error } = await supabase.from('invoice').select(`
+    const { data, error } = await supabase
+      .from('invoice')
+      .select(
+        `
       *,
       invoice_position (
         *
@@ -107,7 +110,9 @@ export const useInvoiceList = () => {
       customer (
         *
       )
-    `)
+    `,
+      )
+      .order('created_at', { ascending: false })
     if (error) throw error
     return data.map(mapInvoice)
   })

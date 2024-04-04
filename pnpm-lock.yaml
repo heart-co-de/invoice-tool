@@ -26,6 +26,9 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  uuid-v9:
+    specifier: ^0.3.5
+    version: 0.3.5
   vue:
     specifier: ^3.2.47
     version: 3.2.47
@@ -3333,6 +3336,10 @@ packages:
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  /uuid-v9@0.3.5:
+    resolution: {integrity: sha512-j80HYTFj2N2VaL52rZfG6Va6vP9JaOFPYg72uDYPSMdkBkPcm3NRHhXWL+MfcFBiIoNwGHq7kuDASgRp9ZHv6g==}
+    dev: false
 
   /validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}

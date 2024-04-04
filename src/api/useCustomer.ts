@@ -16,7 +16,10 @@ export const useCustomer = (customerId: MaybeRef<number | undefined>) => {
         .select('*')
         .eq('id', unref(customerId))
       if (error) throw error
-      return data[0]
+      return {
+        ...data[0],
+        image_url: data[0]?.image_url || '',
+      }
     },
     {
       enabled: computed(() => !!unref(customerId)),
@@ -26,7 +29,10 @@ export const useCustomer = (customerId: MaybeRef<number | undefined>) => {
 
 export const useCustomerList = () => {
   return useQuery('customer', async () => {
-    const { data, error } = await supabase.from('customer').select('*')
+    const { data, error } = await supabase
+      .from('customer')
+      .select('*')
+      .order('created_at', { ascending: false })
     if (error) throw error
     return data
   })
