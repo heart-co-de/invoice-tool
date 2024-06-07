@@ -31,7 +31,7 @@ const filteredCalendarData = computed(() => {
   const data = calendarData.value
 
   return data
-    .filter((event) => event.month + 1 === props.month)
+    .filter((event) => event.month === props.month)
     .filter((event) => event.year === props.year)
 })
 </script>

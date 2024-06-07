@@ -20,8 +20,8 @@ const convertIcalStringToEvents = (icalString: string): CalendarEvent[] => {
     .map(([, event]) => {
       const durationInMs = (event.end?.getTime() || 0) - (event.start?.getTime() || 0)
       return {
-        day: event.start?.getDate() || 0,
-        month: event.start?.getMonth() || 0,
+        day: (event.start?.getDate() || 0) + 1,
+        month: (event.start?.getMonth() || 0) + 1,
         year: event.start?.getFullYear() || 0,
         title: event.summary || '',
         durationInHours: durationInMs / 1000 / 60 / 60,
@@ -47,6 +47,16 @@ const mergeDuplicateEvents = (events: CalendarEvent[]): CalendarEvent[] => {
   }, [] as CalendarEvent[])
 }
 
+export const fetchCalendarEvents = async (url: string) => {
+  const { data: icalString, error } = await supabase.functions.invoke('cors-proxy', {
+    body: {
+      url,
+    },
+  })
+  if (error) throw error
+  return mergeDuplicateEvents(convertIcalStringToEvents(icalString))
+}
+
 export const useCalendarQuery = (customerId: MaybeRef<number | undefined>) => {
   const { data: customerData } = useCustomer(customerId)
   return useQuery({
@@ -54,13 +64,7 @@ export const useCalendarQuery = (customerId: MaybeRef<number | undefined>) => {
     enabled: computed(() => !!customerData.value?.ical_url),
     queryFn: async () => {
       if (!customerData.value?.ical_url) throw new Error('No calendar URL')
-      const { data: icalString, error } = await supabase.functions.invoke('cors-proxy', {
-        body: {
-          url: customerData.value.ical_url,
-        },
-      })
-      if (error) throw error
-      return mergeDuplicateEvents(convertIcalStringToEvents(icalString))
+      return fetchCalendarEvents(customerData.value.ical_url)
     },
   })
 }

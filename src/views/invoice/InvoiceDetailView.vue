@@ -52,7 +52,7 @@ import { computed, reactive, toRefs } from 'vue'
 import { onceTruthy } from '../../utils/onceTruthy'
 import InvoicePositionItem from './InvoicePositionItem.vue'
 import InvoicePositionTable from './InvoicePositionTable.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import InvoiceCalendarList from './InvoiceCalendarList.vue'
 import type { CalendarEvent } from '@/api/useCalendar'
 
@@ -64,11 +64,14 @@ const { invoiceId } = toRefs(props)
 
 // Form
 
+const route = useRoute()
+const { query } = route
+
 const updateInvoiceForm = reactive({
   id: invoiceId,
-  customer_id: 0,
-  for_month: 0,
-  for_year: 0,
+  customer_id: Number(query.customer_id) || 0,
+  for_month: Number(query.for_month) || 0,
+  for_year: Number(query.for_year) || 0,
   invoice_number: 0,
   invoice_position: [] as InvoicePosition[],
 }) satisfies UpdateInvoice
@@ -146,7 +149,7 @@ const addCalendarEventsToInvoicePositions = (calendarEvents: CalendarEvent[]) =>
     ...calendarEvents.map(
       (calendarEvent) =>
         ({
-          service_date: new Date(calendarEvent.year, calendarEvent.month, calendarEvent.day)
+          service_date: new Date(calendarEvent.year, calendarEvent.month - 1, calendarEvent.day)
             .toISOString()
             .slice(0, 10),
           description: calendarEvent.title,
