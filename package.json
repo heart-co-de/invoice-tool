@@ -53,7 +53,7 @@
     "prettier-plugin-packagejson": "^2.4.10",
     "supabase": "^1.41.4",
     "tailwindcss": "^3.3.1",
-    "typescript": "^4.9.5",
+    "typescript": "^5.5.4",
     "vite": "^4.1.4",
     "vue-tsc": "^1.2.0"
   },

@@ -168,6 +168,7 @@
         </div>
       </div>
     </div>
+
     <div class="flex flex-col flex-1 lg:pl-64">
       <div class="sticky top-0 z-10 pt-1 pl-1 bg-white sm:pl-3 sm:pt-3 lg:hidden">
         <button
@@ -212,6 +213,7 @@ import {
   UsersIcon,
   XMarkIcon,
   DocumentTextIcon,
+  CogIcon,
 } from '@heroicons/vue/24/outline'
 import { useUserData } from './api/useUserData'
 
@@ -224,6 +226,7 @@ const navItems = [
   { name: 'Home', to: '/home', icon: HomeIcon },
   { name: 'Customers', to: '/customer', icon: UsersIcon },
   { name: 'Invoices', to: '/invoice', icon: DocumentTextIcon },
+  { name: 'Settings', to: '/settings', icon: CogIcon },
 ]
 
 const navigation = computed(() =>

@@ -16,6 +16,7 @@
         v-for="(invoicePosition, index) in updateInvoiceForm.invoice_position"
         :key="index"
         :invoice-position="invoicePosition"
+        :is-initially-in-edit-mode="!invoicePosition.description && !invoicePosition.quantity"
         @update:invoice-position="updateInvoicePosition({ index, invoicePosition: $event })"
       />
     </InvoicePositionTable>
@@ -68,7 +69,7 @@ const route = useRoute()
 const { query } = route
 
 const updateInvoiceForm = reactive({
-  id: invoiceId,
+  id: invoiceId?.value || 0,
   customer_id: Number(query.customer_id) || 0,
   for_month: Number(query.for_month) || 0,
   for_year: Number(query.for_year) || 0,
@@ -99,7 +100,9 @@ const createInvoicePosition = () => {
   updateInvoiceForm.invoice_position = [
     ...updateInvoiceForm.invoice_position,
     {
-      service_date: new Date().toISOString().slice(0, 10),
+      service_date: new Date(updateInvoiceForm.for_year, updateInvoiceForm.for_month, 1)
+        .toISOString()
+        .slice(0, 10),
       description: '',
       quantity: 0,
       unit_quantity: 'Stunde',

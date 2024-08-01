@@ -9,6 +9,7 @@
         type="date"
         v-model="serviceDate"
         class="-m-4 -mr-3"
+        ref="serviceDateInput"
       />
       <template v-else>{{ formatAsDate(new Date(serviceDate)) }}</template>
     </td>
@@ -63,10 +64,7 @@
       {{ formatAsEuro(price) }}
     </td>
     <td class="relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-0">
-      <button
-        @click.prevent="isEditMode = !isEditMode"
-        class="text-indigo-600 hover:text-indigo-900"
-      >
+      <button @click.prevent="toggleEditMode" class="text-indigo-600 hover:text-indigo-900">
         {{ isEditMode ? 'Done' : 'Edit' }}
       </button>
     </td>
@@ -75,7 +73,7 @@
 
 <script setup lang="ts">
 import BaseInput from '@/components/BaseInput.vue'
-import { computed, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import type { InvoicePosition } from '../../api/useInvoice'
 import DropdownUnitQuantity from '@/components/DropdownUnitQuantity.vue'
 import { formatAsDate, formatQuantity, formatUnit } from '@/utils/unitHelpers'
@@ -83,6 +81,7 @@ import { formatAsEuro } from '@/utils/unitHelpers'
 
 const props = defineProps<{
   invoicePosition: InvoicePosition
+  isInitiallyInEditMode?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -115,5 +114,24 @@ const unitQuantity = createTwoWayBinding('unit_quantity')
 const pricePerQuantity = createTwoWayBinding('price_per_quantity')
 const price = computed(() => props.invoicePosition.price)
 
-const isEditMode = ref(false)
+const isEditMode = ref(!!props.isInitiallyInEditMode)
+const serviceDateInput = ref<InstanceType<typeof BaseInput> | null>(null)
+
+const focusServiceDateInput = async () => {
+  await nextTick()
+  serviceDateInput.value?.$el?.querySelector?.('input')?.focus?.()
+}
+
+onMounted(() => {
+  if (isEditMode.value) {
+    focusServiceDateInput()
+  }
+})
+
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value
+  if (isEditMode.value) {
+    focusServiceDateInput()
+  }
+}
 </script>

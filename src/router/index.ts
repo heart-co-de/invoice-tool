@@ -114,9 +114,17 @@ const router = createRouter({
             pageTitle: 'Invoice Details',
           },
         },
+        {
+          path: 'settings',
+          component: () => import('../views/settings/SettingsView.vue'),
+          meta: {
+            pageTitle: 'Settings',
+          },
+        },
       ],
     },
 
+    // No layout
     {
       path: '/invoice/:invoiceId/print',
       props: (route) => ({ invoiceId: Number(route.params.invoiceId) }),

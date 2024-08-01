@@ -28,20 +28,22 @@
                       class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                       aria-hidden="true"
                     />
-                    <span class="truncate">{{ invoice.for_month }}.{{ invoice.for_year }}</span>
+                    <span class="truncate">
+                      {{ formatAsMonthYear(new Date(invoice.for_year, invoice.for_month - 1, 1)) }}
+                    </span>
                   </p>
                 </div>
                 <div class="hidden md:block">
                   <div>
-                    <p class="text-sm text-gray-900">
+                    <!-- <p class="text-sm text-gray-900">
                       For Customer: {{ invoice.customer[0].name }}
-                    </p>
+                    </p> -->
                     <p class="flex items-center mt-2 text-sm text-gray-500">
                       <CurrencyEuroIcon
                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                         aria-hidden="true"
                       />
-                      {{ invoice.total_price }}
+                      {{ formatAsEuro(invoice.total_price) }}
                     </p>
                   </div>
                 </div>
@@ -59,6 +61,7 @@
 
 <script setup lang="ts">
 import { useInvoiceList } from '@/api/useInvoice'
+import { formatAsEuro, formatAsMonthYear } from '@/utils/unitHelpers'
 import {
   ChevronRightIcon,
   EnvelopeIcon,

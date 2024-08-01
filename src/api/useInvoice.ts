@@ -1,12 +1,12 @@
 import { queryClient } from '@/plugins/vueQuery'
 import { supabase } from '@/services/supabase'
-import type { MakeOptional } from '@/utils/MakeOptional'
 import type { MaybeRef } from '@vueuse/core'
 import { omit } from 'lodash'
 import { computed, unref } from 'vue'
 import { useMutation, useQuery } from 'vue-query'
 import { getUserId } from './utils'
 import { unitQuantitySchema } from '@/utils/unitHelpers'
+import { z } from 'zod'
 
 type MaybeArray<T> = T | T[]
 type UnArray<T> = T extends (infer U)[] ? U : T
@@ -112,25 +112,46 @@ export const useInvoiceList = () => {
       )
     `,
       )
-      .order('created_at', { ascending: false })
+      .order('invoice_number', { ascending: false })
     if (error) throw error
     return data.map(mapInvoice)
   })
 }
 
 export type Invoice = NonNullable<ReturnType<typeof useInvoice>['data']['value']>
-export type UpdateInvoice = MakeOptional<
-  Omit<Invoice, 'user_id' | 'created_at' | 'invoice_position' | 'total_price' | 'customer'>,
-  'id'
-> & { invoice_position: InvoicePosition[] }
-export type InvoicePosition = MakeOptional<
-  NonNullable<Invoice['invoice_position'][number]>,
-  'id' | 'created_at' | 'invoice_id' | 'user_id'
->
+
+const InvoicePositionSchema = z.object({
+  description: z.string(),
+  price: z.number(),
+  price_per_quantity: z.number(),
+  quantity: z.number(),
+  service_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format, should be YYYY-MM-DD'),
+  unit_quantity: unitQuantitySchema,
+  created_at: z.string().nullable().optional(),
+  id: z.number().optional(),
+  user_id: z.string().optional(),
+  invoice_id: z.number().optional(),
+})
+
+export const UpdateInvoiceSchema = z.object({
+  invoice_number: z.number(),
+  customer_id: z.number(),
+  for_month: z.number(),
+  for_year: z.number(),
+  id: z.number().optional(),
+  invoice_position: z.array(InvoicePositionSchema),
+})
+
+export type UpdateInvoice = z.infer<typeof UpdateInvoiceSchema>
+export type InvoicePosition = z.infer<typeof InvoicePositionSchema>
 
 export const useUpdateInvoice = () => {
   return useMutation(
-    async (invoice: UpdateInvoice) => {
+    async (invoiceData: UpdateInvoice) => {
+      console.log({ invoiceData })
+      const invoice = UpdateInvoiceSchema.parse(invoiceData)
       const userId = await getUserId()
       const invoiceWithoutPositions = omit(invoice, 'invoice_position')
       const { data, error: invoiceError } = await supabase
